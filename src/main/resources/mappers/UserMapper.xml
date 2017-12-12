@@ -24,6 +24,22 @@
     from mmall_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="checkUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(1) from mmall_user where username=#{username,jdbcType=VARCHAR}
+  </select>
+  <select id="checkEmail" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(1) from mmall_user where email=#{email,jdbcType=VARCHAR}
+  </select>
+  <select id="checkPhone" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(1) from mmall_user where phone=#{phone,jdbcType=VARCHAR}
+  </select>
+  <select id="selectLogin" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_user
+    where username=#{username}
+    and password=#{password}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_user
     where id = #{id,jdbcType=INTEGER}
@@ -101,7 +117,7 @@
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
+        now()
       </if>
     </trim>
   </insert>
@@ -133,7 +149,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now()
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
