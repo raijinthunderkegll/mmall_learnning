@@ -27,11 +27,23 @@
   <select id="checkUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
     select count(1) from mmall_user where username=#{username,jdbcType=VARCHAR}
   </select>
+  <select id="checkUserNameById" resultType="java.lang.Integer" parameterType="java.util.Map">
+    <![CDATA[select count(1) from mmall_user where username=#{username,jdbcType=VARCHAR} and id <> #{userId}]]>
+  </select>
   <select id="checkEmail" resultType="java.lang.Integer" parameterType="java.lang.String">
     select count(1) from mmall_user where email=#{email,jdbcType=VARCHAR}
   </select>
+  <select id="checkEmailById" resultType="java.lang.Integer" parameterType="java.util.Map">
+    <![CDATA[select count(1) from mmall_user where email=#{email,jdbcType=VARCHAR} and id <> #{userId}]]>
+  </select>
   <select id="checkPhone" resultType="java.lang.Integer" parameterType="java.lang.String">
     select count(1) from mmall_user where phone=#{phone,jdbcType=VARCHAR}
+  </select>
+  <select id="checkPhoneById" resultType="java.lang.Integer" parameterType="java.util.Map">
+    <![CDATA[select count(1) from mmall_user where phone=#{phone,jdbcType=VARCHAR} and id <> #{userId}]]>
+  </select>
+  <select id="checkPassword" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select count(1) from mmall_user where password=#{password} and id=#{userId}
   </select>
   <select id="selectLogin" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
@@ -39,6 +51,12 @@
     from mmall_user
     where username=#{username}
     and password=#{password}
+  </select>
+  <select id="selectUserByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_user
+    where username=#{username}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_user

@@ -21,6 +21,18 @@
     from mmall_category
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectPriorForChildren" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from mmall_cart m
+    start with m.id = #{id} connect by m.parentId = prior m.id
+  </select>
+  <select id="selectLevelForChildren" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from mmall_cart m
+    where parent_id = #{id,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from mmall_category
     where id = #{id,jdbcType=INTEGER}
