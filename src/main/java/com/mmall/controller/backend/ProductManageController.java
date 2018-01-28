@@ -6,12 +6,12 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
 import com.mmall.pojo.User;
+import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
 import com.mmall.util.PropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +37,8 @@ public class ProductManageController {
     IUserService iUserService;
     @Autowired
     IProductService iProductService;
+    @Autowired
+    IFileService iFileService;
 
     @RequestMapping("save.do")
     @ResponseBody
@@ -130,6 +132,7 @@ public class ProductManageController {
             Map fileMap = Maps.newHashMap();
             fileMap.put("uri",targetFileName);
             fileMap.put("url",url);
+            return null;
         }else{
             return ServerResponse.createByErrorMessage("无权限操作");
         }
