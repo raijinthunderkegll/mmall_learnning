@@ -10,6 +10,7 @@ import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
 import com.mmall.util.PropertiesUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -118,6 +120,8 @@ public class ProductManageController {
         }
     }
 
+    @RequestMapping("upload.do")
+    @ResponseBody
     public ServerResponse upload(HttpSession session, MultipartFile file, HttpServletRequest request){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
         if(user == null){
@@ -132,10 +136,49 @@ public class ProductManageController {
             Map fileMap = Maps.newHashMap();
             fileMap.put("uri",targetFileName);
             fileMap.put("url",url);
-            return null;
+            return ServerResponse.createBySuccess(fileMap);
         }else{
             return ServerResponse.createByErrorMessage("无权限操作");
         }
+    }
+
+    @RequestMapping("richtext_upload.do")
+    @ResponseBody
+    public Map richtextUpload(HttpSession session, MultipartFile file, HttpServletRequest request, HttpServletResponse response){
+        Map resultMap = Maps.newHashMap();
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            resultMap.put("success",false);
+            resultMap.put("msg","用户未登录，请登录管理员");
+            return resultMap;
+        }
+        //富文本返回值要求：
+//       {
+//            "success": true/false,
+//            "msg": "error message", # optional
+//            "file_path": "[real file path]"
+//        }
+
+        if(iUserService.checkAdminRole(user)){
+            String path = request.getServletContext().getRealPath(Const.UPLOAD_FILE_PATH);
+            String targetFileName = iFileService.upload(file,path);
+
+            if(StringUtils.isBlank(targetFileName)){
+                resultMap.put("success",false);
+                resultMap.put("msg","上传失败");
+                return resultMap;
+            }
+            String url = PropertiesUtil.getProperty(Const.FTP_PREFIX) + targetFileName;
+            resultMap.put("success",true);
+            resultMap.put("msg","上传成功");
+            resultMap.put("file_path",url);
+            return resultMap;
+        } else {
+            resultMap.put("success",false);
+            resultMap.put("msg","无操作权限");
+            return resultMap;
+        }
+
     }
 
 }
